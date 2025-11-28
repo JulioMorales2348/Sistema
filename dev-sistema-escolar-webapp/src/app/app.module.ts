@@ -50,6 +50,8 @@ import { MaestrosScreenComponent } from './screens/maestros-screen/maestros-scre
 import { NavbarUserComponent } from './partials/navbar-user/navbar-user.component';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { EliminarUserModalComponent } from './modals/eliminar-user-modal/eliminar-user-modal.component';
+import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -68,7 +70,8 @@ import { EliminarUserModalComponent } from './modals/eliminar-user-modal/elimina
     MaestrosScreenComponent,
     NavbarUserComponent,
     SidebarComponent,
-    EliminarUserModalComponent
+    EliminarUserModalComponent,
+    GraficasScreenComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +93,8 @@ import { EliminarUserModalComponent } from './modals/eliminar-user-modal/elimina
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    NgChartsModule
   ],
   providers: [
     CookieService,
