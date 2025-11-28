@@ -92,6 +92,9 @@ class AdminView(generics.CreateAPIView):
 
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
+        es_admin = request.user.groups.filter(name='administrador').exists()
+        if not es_admin:
+            return Response({"details": "No tienes permisos para eliminar administradores"}, 403)
         admin = get_object_or_404(Administradores, id=request.GET.get("id"))
         try:
             admin.user.delete()

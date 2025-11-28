@@ -95,6 +95,16 @@ class MaestrosView(generics.CreateAPIView):
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
         maestro = get_object_or_404(Maestros, id=request.GET.get("id"))
+        es_admin = request.user.groups.filter(name='administrador').exists()
+        es_maestro = request.user.groups.filter(name='maestro').exists()
+        usuario_que_pide = request.user
+        if es_admin:
+            pass 
+        elif es_maestro:
+            if maestro.user.id != usuario_que_pide.id:
+                return Response({"details": "No puedes eliminar a otros maestros"}, 403)
+        else:
+            return Response({"details": "No tienes permisos"}, 403)
         try:
             maestro.user.delete()
             return Response({"details":"Maestro eliminado"},200)

@@ -87,6 +87,10 @@ class AlumnosView(generics.CreateAPIView):
     # Eliminar alumno
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
+        es_admin = request.user.groups.filter(name='administrador').exists()
+        es_maestro = request.user.groups.filter(name='maestro').exists()
+        if not es_admin and not es_maestro:
+            return Response({"details": "No tienes permisos para eliminar alumnos"}, 403)
         alumno = get_object_or_404(Alumnos, id=request.GET.get("id"))
         try:
             alumno.user.delete()
