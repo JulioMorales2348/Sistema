@@ -12,6 +12,13 @@ from rest_framework import permissions
 class EventosView(APIView):
     # Aseguramos que requiera autenticación 
     permission_classes = [permissions.IsAuthenticated]
+
+    # Obtener lista de eventos (GET)
+    def get(self, request):
+        # Obtenemos todos los eventos de la BD
+        eventos = Eventos.objects.all().order_by('id')
+        serializer = EventosSerializer(eventos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     # Registrar nuevo evento
     @transaction.atomic

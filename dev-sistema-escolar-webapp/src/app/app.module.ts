@@ -60,6 +60,10 @@ import { NgChartsModule } from 'ng2-charts';
 
 import { RegistroEventosScreenComponent } from './screens/registro-eventos-screen/registro-eventos-screen.component';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { EventosAcademicosScreenComponent } from './screens/eventos-academicos-screen/eventos-academicos-screen.component';
+import { EditarEventoModalComponent } from './modals/editar-evento-modal/editar-evento-modal.component';
+
+
 
 
 @NgModule({
@@ -80,7 +84,9 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
     SidebarComponent,
     EliminarUserModalComponent,
     GraficasScreenComponent,
-    RegistroEventosScreenComponent
+    RegistroEventosScreenComponent,
+    EventosAcademicosScreenComponent,
+    EditarEventoModalComponent
   ],
   imports: [
     BrowserModule,

@@ -3,8 +3,11 @@
     <mat-card class="role-card">
       <mat-card-header class="role-card-header">
         <div class="actions-header-colum">
-          <mat-card-title class="title-card">Registro de Evento Académico</mat-card-title>
-          <mat-card-subtitle class="subtitle-card">Ingresa los detalles del nuevo evento</mat-card-subtitle>
+          <!-- Título Dinámico -->
+          <mat-card-title class="title-card">{{ editar ? 'Editar Evento Académico' : 'Registro de Evento Académico' }}</mat-card-title>
+          <mat-card-subtitle class="subtitle-card">
+            {{ editar ? 'Modifica los detalles del evento' : 'Ingresa los detalles del nuevo evento' }}
+          </mat-card-subtitle>
         </div>
         <div class="actions-row">
           <button mat-icon-button class="back-btn" (click)="goBack()">
@@ -16,12 +19,13 @@
       <mat-card-content>
         <div class="container-form mt-4">
           
-          <!-- Nombre y Tipo -->
+          <!-- ... (Los campos son iguales hasta los checkboxes) ... -->
+          <!-- Fila 1: Nombre y Tipo -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Nombre del evento</mat-label>
-                <input matInput [(ngModel)]="evento.nombre_evento" placeholder="Solo letras y números">
+                <input matInput [(ngModel)]="evento.nombre_evento">
                 <mat-error *ngIf="errors.nombre_evento">{{ errors.nombre_evento }}</mat-error>
               </mat-form-field>
             </div>
@@ -39,18 +43,17 @@
             </div>
           </div>
 
-          <!-- Fechas y Horarios -->
+          <!-- Fila 2: Fechas y Horarios -->
           <div class="row">
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Fecha de realización</mat-label>
-                <input matInput [matDatepicker]="picker" [min]="minDate" (dateChange)="changeFecha($event)" readonly>
+                <input matInput [matDatepicker]="picker" [min]="minDate" [(ngModel)]="evento.fecha_realizacion" (dateChange)="changeFecha($event)" readonly>
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
                 <mat-error *ngIf="errors.fecha_realizacion">{{ errors.fecha_realizacion }}</mat-error>
               </mat-form-field>
             </div>
-
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Hora inicio</mat-label>
@@ -60,7 +63,6 @@
                 <mat-error *ngIf="errors.hora_inicio">{{ errors.hora_inicio }}</mat-error>
               </mat-form-field>
             </div>
-
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Hora fin</mat-label>
@@ -72,33 +74,38 @@
             </div>
           </div>
 
-          <!-- Lugar y Cupo -->
+          <!-- Fila 3: Lugar y Cupo -->
           <div class="row">
             <div class="col-md-8 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Lugar</mat-label>
-                <input matInput [(ngModel)]="evento.lugar" placeholder="Ej. Auditorio 1">
+                <input matInput [(ngModel)]="evento.lugar">
                 <mat-error *ngIf="errors.lugar">{{ errors.lugar }}</mat-error>
               </mat-form-field>
             </div>
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Cupo máximo</mat-label>
-                <!-- Validación 3 dígitos: Se puede controlar con max="999" en HTML también, pero la lógica fuerte está en el TS -->
-                <input matInput type="number" [(ngModel)]="evento.cupo_maximo" min="1" max="999">
+                <input matInput type="number" [(ngModel)]="evento.cupo_maximo">
                 <mat-error *ngIf="errors.cupo_maximo">{{ errors.cupo_maximo }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Público Objetivo -->
+          <!-- Público Objetivo (Checkboxes con lógica de 'checked') -->
           <div class="row mb-3">
             <div class="col-12">
               <label class="subtitle-card mb-2 d-block">Público objetivo:</label>
               <div class="d-flex gap-3 flex-wrap">
-                <mat-checkbox value="Estudiantes" (change)="checkboxChange($event)">Estudiantes</mat-checkbox>
-                <mat-checkbox value="Profesores" (change)="checkboxChange($event)">Profesores</mat-checkbox>
-                <mat-checkbox value="Publico General" (change)="checkboxChange($event)">Público general</mat-checkbox>
+                <mat-checkbox value="Estudiantes" 
+                              (change)="checkboxChange($event)" 
+                              [checked]="evento.publico_objetivo?.includes('Estudiantes')">Estudiantes</mat-checkbox>
+                <mat-checkbox value="Profesores" 
+                              (change)="checkboxChange($event)" 
+                              [checked]="evento.publico_objetivo?.includes('Profesores')">Profesores</mat-checkbox>
+                <mat-checkbox value="Publico General" 
+                              (change)="checkboxChange($event)" 
+                              [checked]="evento.publico_objetivo?.includes('Publico General')">Público general</mat-checkbox>
               </div>
               <mat-error *ngIf="errors.publico_objetivo" style="font-size: 12px; color: #f44336;">
                 {{ errors.publico_objetivo }}
@@ -124,11 +131,9 @@
           <!-- Responsable y Descripción -->
           <div class="row">
             <div class="col-md-6 mb-3">
-              <!-- RESPONSABLE AHORA ES SELECT -->
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Responsable del evento</mat-label>
                 <mat-select [(ngModel)]="evento.responsable">
-                  <!-- Iteramos la lista que viene del backend -->
                   <mat-option *ngFor="let resp of lista_responsables" [value]="resp.value">
                     {{ resp.nombre }} <small>({{ resp.rol }})</small>
                   </mat-option>
@@ -136,7 +141,6 @@
                 <mat-error *ngIf="errors.responsable">{{ errors.responsable }}</mat-error>
               </mat-form-field>
             </div>
-
             <div class="col-md-6 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Descripción breve</mat-label>
@@ -146,11 +150,16 @@
             </div>
           </div>
 
-          <!-- Botón -->
+          <!-- Botones Dinámicos -->
           <div class="row mt-3">
             <div class="col-12 text-center">
-              <button mat-raised-button class="btn-registrar" (click)="registrar()">
+              <!-- Botón Registrar -->
+              <button *ngIf="!editar" mat-raised-button class="btn-registrar" (click)="registrar()">
                 Registrar Evento
+              </button>
+              <!-- Botón Actualizar -->
+              <button *ngIf="editar" mat-raised-button class="btn-registrar" style="background-color: #E84150;" (click)="actualizar()">
+                Actualizar
               </button>
             </div>
           </div>

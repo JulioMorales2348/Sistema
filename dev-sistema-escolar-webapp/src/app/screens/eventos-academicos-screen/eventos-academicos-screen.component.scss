@@ -1,0 +1,97 @@
+// Mismos estilos base que AlumnosScreen
+.main-content-eventos {
+  margin-left: 220px;
+  transition: margin-left 0.3s;
+}
+
+@media (max-width: 991px) {
+  .main-content-eventos {
+    margin-left: 0;
+  }
+}
+
+.wrapper {
+  height: auto;
+  min-height: 100vh;
+}
+
+.header-home-eventos {
+  width: 100%;
+  height: 10px; // O la altura que tengas en tu header general
+}
+
+.body-eventos {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+// Títulos y Alertas
+.title-perfil {
+  font-family: Nexa-Bold;
+  text-transform: capitalize;
+  font-size: 35px;
+  color: #231F20; // <--- CAMBIO: Color oscuro (antes azul #2B5279)
+  margin-left: 40px;
+}
+
+.title-table {
+  font-family: Nexa-Bold;
+  font-size: 25px;
+  color: #0F3057;
+}
+
+.alert-primary {
+  background-color: #cce5ff;
+  border-color: #b8daff;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  font-family: Nexa;
+}
+
+// Contenedor de Tabla
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-header-cell {
+  font-family: Nexa-Bold !important;
+  font-size: 16px;
+  color: #231F20; // O el color de tu tema
+}
+
+.mat-mdc-cell {
+  font-family: Nexa !important;
+  font-size: 14px;
+}
+
+// Iconos de acción
+.td-editar {
+  color: #0092B8;
+  cursor: pointer;
+  font-size: 20px;
+  text-align: center;
+  &:hover { color: #006179; font-size: 22px; }
+}
+
+.td-eliminar {
+  color: #E84150;
+  cursor: pointer;
+  font-size: 20px;
+  text-align: center;
+  &:hover { color: #ce1626; font-size: 22px; }
+}
