@@ -59,6 +59,7 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
 import { NgChartsModule } from 'ng2-charts';
 
 import { RegistroEventosScreenComponent } from './screens/registro-eventos-screen/registro-eventos-screen.component';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 
 @NgModule({
@@ -104,7 +105,8 @@ import { RegistroEventosScreenComponent } from './screens/registro-eventos-scree
     MatDialogModule,
     NgChartsModule,
     MatExpansionModule,
-    MatListModule
+    MatListModule,
+    NgxMaterialTimepickerModule
   ],
   providers: [
     CookieService,

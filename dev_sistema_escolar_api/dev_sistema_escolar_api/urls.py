@@ -29,6 +29,8 @@ urlpatterns = [
         path('total-usuarios/', users.TotalUsers.as_view()),\
     
         path('eventos/', eventos.EventosView.as_view()),
+
+        path('lista-responsables/', users.ListaResponsables.as_view()),
     
     #Login
         path('login/', auth.CustomAuthToken.as_view()),

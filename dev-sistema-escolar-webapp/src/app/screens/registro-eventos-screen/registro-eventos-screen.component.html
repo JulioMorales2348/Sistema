@@ -1,15 +1,11 @@
 <div class="wrapper">
   <div class="reg-shell">
-    <!-- Tarjeta Principal -->
     <mat-card class="role-card">
       <mat-card-header class="role-card-header">
         <div class="actions-header-colum">
           <mat-card-title class="title-card">Registro de Evento Académico</mat-card-title>
-          <mat-card-subtitle class="subtitle-card">
-            Ingresa los detalles del nuevo evento
-          </mat-card-subtitle>
+          <mat-card-subtitle class="subtitle-card">Ingresa los detalles del nuevo evento</mat-card-subtitle>
         </div>
-        <!-- Botón regresar -->
         <div class="actions-row">
           <button mat-icon-button class="back-btn" (click)="goBack()">
             <mat-icon class="back-icon">arrow_back</mat-icon>
@@ -20,12 +16,13 @@
       <mat-card-content>
         <div class="container-form mt-4">
           
-          <!-- Fila 1: Nombre y Tipo -->
+          <!-- Nombre y Tipo -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Nombre del evento</mat-label>
-                <input matInput [(ngModel)]="evento.nombre_evento">
+                <input matInput [(ngModel)]="evento.nombre_evento" placeholder="Solo letras y números">
+                <mat-error *ngIf="errors.nombre_evento">{{ errors.nombre_evento }}</mat-error>
               </mat-form-field>
             </div>
             <div class="col-md-6 mb-3">
@@ -35,100 +32,121 @@
                   <mat-option value="Conferencia">Conferencia</mat-option>
                   <mat-option value="Taller">Taller</mat-option>
                   <mat-option value="Seminario">Seminario</mat-option>
-                  <mat-option value="Simposio">Simposio</mat-option>
+                  <mat-option value="Concurso">Concurso</mat-option>
                 </mat-select>
+                <mat-error *ngIf="errors.tipo_evento">{{ errors.tipo_evento }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Fila 2: Fechas y Horarios -->
+          <!-- Fechas y Horarios -->
           <div class="row">
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Fecha de realización</mat-label>
-                <input matInput [matDatepicker]="picker" (dateChange)="changeFecha($event)">
+                <input matInput [matDatepicker]="picker" [min]="minDate" (dateChange)="changeFecha($event)" readonly>
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="errors.fecha_realizacion">{{ errors.fecha_realizacion }}</mat-error>
               </mat-form-field>
             </div>
+
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Hora inicio</mat-label>
-                <input matInput type="time" [(ngModel)]="evento.hora_inicio">
+                <input matInput [ngxTimepicker]="pickerInicio" [(ngModel)]="evento.hora_inicio" readonly [format]="24">
+                <ngx-material-timepicker #pickerInicio [format]="24"></ngx-material-timepicker>
+                <mat-icon matSuffix (click)="pickerInicio.open()">access_time</mat-icon>
+                <mat-error *ngIf="errors.hora_inicio">{{ errors.hora_inicio }}</mat-error>
               </mat-form-field>
             </div>
+
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Hora fin</mat-label>
-                <input matInput type="time" [(ngModel)]="evento.hora_fin">
+                <input matInput [ngxTimepicker]="pickerFin" [(ngModel)]="evento.hora_fin" readonly [format]="24">
+                <ngx-material-timepicker #pickerFin [format]="24"></ngx-material-timepicker>
+                <mat-icon matSuffix (click)="pickerFin.open()">access_time</mat-icon>
+                <mat-error *ngIf="errors.hora_fin">{{ errors.hora_fin }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Fila 3: Lugar y Cupo -->
+          <!-- Lugar y Cupo -->
           <div class="row">
             <div class="col-md-8 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Lugar</mat-label>
-                <input matInput [(ngModel)]="evento.lugar" placeholder="Ej. Auditorio 1, Salón 204...">
+                <input matInput [(ngModel)]="evento.lugar" placeholder="Ej. Auditorio 1">
+                <mat-error *ngIf="errors.lugar">{{ errors.lugar }}</mat-error>
               </mat-form-field>
             </div>
             <div class="col-md-4 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Cupo máximo</mat-label>
-                <input matInput type="number" [(ngModel)]="evento.cupo_maximo">
+                <!-- Validación 3 dígitos: Se puede controlar con max="999" en HTML también, pero la lógica fuerte está en el TS -->
+                <input matInput type="number" [(ngModel)]="evento.cupo_maximo" min="1" max="999">
+                <mat-error *ngIf="errors.cupo_maximo">{{ errors.cupo_maximo }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Fila 4: Público Objetivo (Radio Buttons estilo Pill) -->
-          <div class="row mb-4">
+          <!-- Público Objetivo -->
+          <div class="row mb-3">
             <div class="col-12">
               <label class="subtitle-card mb-2 d-block">Público objetivo:</label>
-              <mat-radio-group [(ngModel)]="evento.publico_objetivo" class="role-row">
-                <mat-radio-button class="role-pill" value="Estudiantes">
-                  <span class="text-radio">Estudiantes</span>
-                </mat-radio-button>
-                <mat-radio-button class="role-pill" value="Docentes">
-                  <span class="text-radio">Docentes</span>
-                </mat-radio-button>
-                <mat-radio-button class="role-pill" value="General">
-                  <span class="text-radio">Público General</span>
-                </mat-radio-button>
-              </mat-radio-group>
+              <div class="d-flex gap-3 flex-wrap">
+                <mat-checkbox value="Estudiantes" (change)="checkboxChange($event)">Estudiantes</mat-checkbox>
+                <mat-checkbox value="Profesores" (change)="checkboxChange($event)">Profesores</mat-checkbox>
+                <mat-checkbox value="Publico General" (change)="checkboxChange($event)">Público general</mat-checkbox>
+              </div>
+              <mat-error *ngIf="errors.publico_objetivo" style="font-size: 12px; color: #f44336;">
+                {{ errors.publico_objetivo }}
+              </mat-error>
             </div>
           </div>
 
-          <!-- Fila Condicional: Programa Educativo -->
-          <div class="row mb-3" *ngIf="evento.publico_objetivo == 'Estudiantes'">
+          <!-- Programa Educativo -->
+          <div class="row mb-3" *ngIf="isEstudianteSelected()">
             <div class="col-12">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Programa educativo</mat-label>
                 <mat-select [(ngModel)]="evento.programa_educativo">
-                  <mat-option value="Ingeniería en Ciencias de la Computación">Ing. Ciencias de la Computación</mat-option>
-                  <mat-option value="Ingeniería en Tecnologías de la Información">Ing. Tecnologías de la Información</mat-option>
+                  <mat-option value="Ingeniería en Ciencias de la Computación">Ingeniería en Ciencias de la Computación</mat-option>
+                  <mat-option value="Licenciatura en Ciencias de la Computación">Licenciatura en Ciencias de la Computación</mat-option>
+                  <mat-option value="Ingeniería en Tecnologías de la Información">Ingeniería en Tecnologías de la Información</mat-option>
                 </mat-select>
+                <mat-error *ngIf="errors.programa_educativo">{{ errors.programa_educativo }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Fila 5: Responsable y Descripción -->
+          <!-- Responsable y Descripción -->
           <div class="row">
             <div class="col-md-6 mb-3">
+              <!-- RESPONSABLE AHORA ES SELECT -->
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Responsable del evento</mat-label>
-                <input matInput [(ngModel)]="evento.responsable">
+                <mat-select [(ngModel)]="evento.responsable">
+                  <!-- Iteramos la lista que viene del backend -->
+                  <mat-option *ngFor="let resp of lista_responsables" [value]="resp.value">
+                    {{ resp.nombre }} <small>({{ resp.rol }})</small>
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="errors.responsable">{{ errors.responsable }}</mat-error>
               </mat-form-field>
             </div>
+
             <div class="col-md-6 mb-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Descripción breve</mat-label>
                 <textarea matInput [(ngModel)]="evento.descripcion" rows="1"></textarea>
+                <mat-error *ngIf="errors.descripcion">{{ errors.descripcion }}</mat-error>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Botón de Acción -->
+          <!-- Botón -->
           <div class="row mt-3">
             <div class="col-12 text-center">
               <button mat-raised-button class="btn-registrar" (click)="registrar()">
