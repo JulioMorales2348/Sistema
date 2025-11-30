@@ -22,6 +22,10 @@
         <span class="material-icons">bar_chart</span>
         <span>Gráficas</span>
       </li>
+      <li *ngIf="canSeeAdminItems()" routerLink="/registro-eventos" routerLinkActive="active" class="scoop-navbar-item">
+      <span class="material-icons">calendar_month</span>
+      <span>Registro de Eventos</span>
+    </li>
       <li *ngIf="canSeeTeacherItems()" routerLink="/eventos-academicos" routerLinkActive="active" class="scoop-navbar-item">
         <span class="material-icons">event</span>
         <span>Eventos Académicos</span>
@@ -71,6 +75,10 @@
           <span class="material-icons">bar_chart</span>
           <span>Gráficas</span>
         </li>
+        <li *ngIf="canSeeAdminItems()" routerLink="/registro-eventos" routerLinkActive="active" class="scoop-navbar-item" (click)="closeSidebar()">
+        <span class="material-icons">calendar_month</span>
+        <span>Registro de Eventos</span>
+      </li>
         <li *ngIf="canSeeTeacherItems()" routerLink="/eventos-academicos" routerLinkActive="active" class="scoop-navbar-item" (click)="closeSidebar()">
           <span class="material-icons">event</span>
           <span>Eventos Académicos</span>

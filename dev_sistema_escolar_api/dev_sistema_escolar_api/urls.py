@@ -8,6 +8,7 @@ from dev_sistema_escolar_api.views import users
 from dev_sistema_escolar_api.views import alumnos
 from dev_sistema_escolar_api.views import maestros
 from dev_sistema_escolar_api.views import auth
+from dev_sistema_escolar_api.views import eventos
 
 urlpatterns = [
     #Create Admin
@@ -25,7 +26,9 @@ urlpatterns = [
     #Maestro Data
         path('lista-maestros/', maestros.MaestrosAll.as_view()),
 
-        path('total-usuarios/', users.TotalUsers.as_view()),
+        path('total-usuarios/', users.TotalUsers.as_view()),\
+    
+        path('eventos/', eventos.EventosView.as_view()),
     
     #Login
         path('login/', auth.CustomAuthToken.as_view()),

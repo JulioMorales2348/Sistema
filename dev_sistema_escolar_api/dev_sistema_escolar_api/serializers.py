@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from dev_sistema_escolar_api.models import *
+from dev_sistema_escolar_api.models import Eventos
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -28,4 +29,9 @@ class MaestroSerializer(serializers.ModelSerializer):
     user=UserSerializer(read_only=True)
     class Meta:
         model = Maestros
+        fields = '__all__'
+
+class EventosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Eventos
         fields = '__all__'

@@ -1,0 +1,144 @@
+<div class="wrapper">
+  <div class="reg-shell">
+    <!-- Tarjeta Principal -->
+    <mat-card class="role-card">
+      <mat-card-header class="role-card-header">
+        <div class="actions-header-colum">
+          <mat-card-title class="title-card">Registro de Evento Académico</mat-card-title>
+          <mat-card-subtitle class="subtitle-card">
+            Ingresa los detalles del nuevo evento
+          </mat-card-subtitle>
+        </div>
+        <!-- Botón regresar -->
+        <div class="actions-row">
+          <button mat-icon-button class="back-btn" (click)="goBack()">
+            <mat-icon class="back-icon">arrow_back</mat-icon>
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="container-form mt-4">
+          
+          <!-- Fila 1: Nombre y Tipo -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nombre del evento</mat-label>
+                <input matInput [(ngModel)]="evento.nombre_evento">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tipo de evento</mat-label>
+                <mat-select [(ngModel)]="evento.tipo_evento">
+                  <mat-option value="Conferencia">Conferencia</mat-option>
+                  <mat-option value="Taller">Taller</mat-option>
+                  <mat-option value="Seminario">Seminario</mat-option>
+                  <mat-option value="Simposio">Simposio</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Fila 2: Fechas y Horarios -->
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Fecha de realización</mat-label>
+                <input matInput [matDatepicker]="picker" (dateChange)="changeFecha($event)">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Hora inicio</mat-label>
+                <input matInput type="time" [(ngModel)]="evento.hora_inicio">
+              </mat-form-field>
+            </div>
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Hora fin</mat-label>
+                <input matInput type="time" [(ngModel)]="evento.hora_fin">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Fila 3: Lugar y Cupo -->
+          <div class="row">
+            <div class="col-md-8 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Lugar</mat-label>
+                <input matInput [(ngModel)]="evento.lugar" placeholder="Ej. Auditorio 1, Salón 204...">
+              </mat-form-field>
+            </div>
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Cupo máximo</mat-label>
+                <input matInput type="number" [(ngModel)]="evento.cupo_maximo">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Fila 4: Público Objetivo (Radio Buttons estilo Pill) -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <label class="subtitle-card mb-2 d-block">Público objetivo:</label>
+              <mat-radio-group [(ngModel)]="evento.publico_objetivo" class="role-row">
+                <mat-radio-button class="role-pill" value="Estudiantes">
+                  <span class="text-radio">Estudiantes</span>
+                </mat-radio-button>
+                <mat-radio-button class="role-pill" value="Docentes">
+                  <span class="text-radio">Docentes</span>
+                </mat-radio-button>
+                <mat-radio-button class="role-pill" value="General">
+                  <span class="text-radio">Público General</span>
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <!-- Fila Condicional: Programa Educativo -->
+          <div class="row mb-3" *ngIf="evento.publico_objetivo == 'Estudiantes'">
+            <div class="col-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Programa educativo</mat-label>
+                <mat-select [(ngModel)]="evento.programa_educativo">
+                  <mat-option value="Ingeniería en Ciencias de la Computación">Ing. Ciencias de la Computación</mat-option>
+                  <mat-option value="Ingeniería en Tecnologías de la Información">Ing. Tecnologías de la Información</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Fila 5: Responsable y Descripción -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Responsable del evento</mat-label>
+                <input matInput [(ngModel)]="evento.responsable">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Descripción breve</mat-label>
+                <textarea matInput [(ngModel)]="evento.descripcion" rows="1"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Botón de Acción -->
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <button mat-raised-button class="btn-registrar" (click)="registrar()">
+                Registrar Evento
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

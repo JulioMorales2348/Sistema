@@ -60,3 +60,19 @@ class Maestros(models.Model):
 
     def __str__(self):
         return "Perfil del maestro "+self.first_name+" "+self.last_name
+
+class Eventos(models.Model):
+    nombre_evento = models.CharField(max_length=255)
+    tipo_evento = models.CharField(max_length=100) 
+    fecha_realizacion = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    lugar = models.CharField(max_length=255)
+    publico_objetivo = models.CharField(max_length=100) 
+    programa_educativo = models.CharField(max_length=255, null=True, blank=True)
+    responsable = models.CharField(max_length=255)
+    descripcion = models.TextField()
+    cupo_maximo = models.IntegerField()
+
+    def __str__(self):
+        return self.nombre_evento

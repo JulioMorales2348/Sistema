@@ -27,6 +27,11 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
 import {MatTableModule} from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
+
+import { MatButtonModule } from '@angular/material/button';
+
 
 // Paginación
 import {MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
@@ -53,6 +58,8 @@ import { EliminarUserModalComponent } from './modals/eliminar-user-modal/elimina
 import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
 import { NgChartsModule } from 'ng2-charts';
 
+import { RegistroEventosScreenComponent } from './screens/registro-eventos-screen/registro-eventos-screen.component';
+
 
 @NgModule({
   declarations: [
@@ -71,7 +78,8 @@ import { NgChartsModule } from 'ng2-charts';
     NavbarUserComponent,
     SidebarComponent,
     EliminarUserModalComponent,
-    GraficasScreenComponent
+    GraficasScreenComponent,
+    RegistroEventosScreenComponent
   ],
   imports: [
     BrowserModule,
@@ -94,7 +102,9 @@ import { NgChartsModule } from 'ng2-charts';
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
-    NgChartsModule
+    NgChartsModule,
+    MatExpansionModule,
+    MatListModule
   ],
   providers: [
     CookieService,
