@@ -12,9 +12,6 @@
   background: var(--background-main);
 }
 
-// =====================
-// PALETTE CSS VARIABLES
-// =====================
 [data-theme="dark"] {
   --background-main: #181a1b;
   --sidebar-bg: #181a1b;
@@ -24,9 +21,6 @@
   --table-header-bg: #222326;
 }
 
-// =====================
-// LAYOUT WRAPPERS
-// =====================
 .navbar-sidebar-wrapper {
   width: 100vw;
   min-height: 56px;
@@ -78,9 +72,6 @@
   position: fixed;
 }
 
-// =====================
-// NAVBAR CONTENT
-// =====================
 .scoop-navbar-logo {
   font-weight: 900;
   font-size: 2.2rem;
@@ -145,9 +136,6 @@
   background: #f0f4fa;
 }
 
-// =====================
-// NAVBAR LIST & ITEMS
-// =====================
 .scoop-navbar-list {
   list-style: none;
   padding: 0;
@@ -209,9 +197,6 @@
   color: #fff;
 }
 
-// =====================
-// DASHBOARD TOGGLE BUTTON
-// =====================
 .dashboard-toggle-btn {
   background: var(--sidebar-bg);
   color: #fff;
@@ -231,9 +216,6 @@
   background: #30507a;
 }
 
-// =====================
-// RESPONSIVE
-// =====================
 @media (max-width: 991px) {
   .main-content {
     margin-left: 0;
@@ -333,7 +315,6 @@
   }
 }
 
-// General polish for desktop
 .scoop-side-navbar {
   box-shadow: 2px 0 16px rgba(0,0,0,0.10);
   padding-top: 2rem;
@@ -350,4 +331,59 @@
   margin-top: 2rem;
   font-size: 1.08rem;
   padding: 1rem 1.2rem;
+}
+
+// Estilos para ítems con submenú
+.has-submenu {
+  justify-content: space-between;
+
+  .item-content {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    .material-icons {
+      margin-right: 0.7rem;
+    }
+  }
+
+  .arrow-icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  // Rotar flecha cuando está expandido
+  &.expanded .arrow-icon {
+    transform: rotate(180deg);
+  }
+}
+
+// Estilos para la lista del submenú
+.scoop-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+// Estilos para los ítems hijos
+.sub-item {
+  padding-left: 2.5rem !important;
+  font-size: 0.95rem !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+
+  .material-icons {
+    font-size: 1.1rem !important;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  &.active {
+    border-left: 4px solid #F88406;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
 }

@@ -5,8 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { FacadeService } from 'src/app/services/facade.service';
 import { EventosService } from 'src/app/services/eventos.service';
-// Imports para el Modal
 import { MatDialog } from '@angular/material/dialog';
+import { EliminarEventoModalComponent } from 'src/app/modals/eliminar-evento-modal/eliminar-evento-modal.component';
 import { EditarEventoModalComponent } from 'src/app/modals/editar-evento-modal/editar-evento-modal.component';
 
 @Component({
@@ -20,35 +20,48 @@ export class EventosAcademicosScreenComponent implements OnInit, AfterViewInit {
   public rol: string = "";
   public token: string = "";
   public lista_eventos: any[] = [];
+  public isAdmin: boolean = false;
 
-  displayedColumns: string[] = ['nombre_evento', 'tipo_evento', 'fecha', 'horario', 'lugar', 'responsable', 'editar', 'eliminar'];
+  displayedColumns: string[] = ['nombre_evento', 'tipo_evento', 'fecha', 'horario', 'lugar', 'responsable'];
+
   dataSource = new MatTableDataSource<DatosEvento>([]);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
   constructor(
     private facadeService: FacadeService,
     private eventosService: EventosService,
     private router: Router,
-    public dialog: MatDialog // Inyectamos Dialog
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
+    // Obtener información del usuario
     this.name_user = this.facadeService.getUserCompleteName();
     this.rol = this.facadeService.getUserGroup();
+    // Verificar si el usuario es administrador
+    const rolLimpio = (this.rol || '').toLowerCase().trim();
+    this.isAdmin = (rolLimpio === 'administrador');
+    // Agregar columnas de edición y eliminación si es administrador
+    if(this.isAdmin){
+      this.displayedColumns.push('editar', 'eliminar');
+    }
+    // Verificar token
     this.token = this.facadeService.getSessionToken();
     if(this.token == ""){
       this.router.navigate(["/"]);
     }
+
     this.obtenerEventos();
   }
 
+  // Asignar paginador y sort después de que la vista se haya inicializado
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
+  // Filtrar tabla
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -57,14 +70,34 @@ export class EventosAcademicosScreenComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Obtener lista de eventos
   public obtenerEventos() {
     this.eventosService.obtenerListaEventos().subscribe(
       (response) => {
         this.lista_eventos = response;
+        console.log("Eventos obtenidos:", this.lista_eventos);
         if (this.lista_eventos.length > 0) {
           this.dataSource = new MatTableDataSource<DatosEvento>(this.lista_eventos as DatosEvento[]);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string) => {
+            switch (sortHeaderId) {
+              case 'fecha':
+                return new Date(data.fecha_realizacion).getTime();
+              case 'horario':
+                return data.hora_inicio;
+              case 'nombre_evento':
+              case 'tipo_evento':
+              case 'lugar':
+              case 'responsable':
+                const value = (data as any)[sortHeaderId];
+                return (typeof value === 'string') ? value.toLowerCase() : value;
+              default:
+                return (data as any)[sortHeaderId];
+            }
+          };
+          setTimeout(() => {
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          });
         }
       },
       (error) => {
@@ -73,29 +106,33 @@ export class EventosAcademicosScreenComponent implements OnInit, AfterViewInit {
     );
   }
 
-  // ✏️ AQUÍ ESTÁ LA LÓGICA QUE PEDISTE
   public goEditar(id: number) {
-    // 1. Abrimos el modal de confirmación
     const dialogRef = this.dialog.open(EditarEventoModalComponent, {
-      data: { id: id }, // Pasamos el ID por si acaso, aunque no se usa visualmente
+      data: { id: id },
       height: '288px',
       width: '328px',
     });
 
-    // 2. Esperamos a que se cierre
     dialogRef.afterClosed().subscribe(result => {
-      // 3. Si confirmó (isConfirmed == true), navegamos al formulario
       if(result && result.isConfirmed){
-        console.log("Usuario confirmó edición. Navegando...");
-        this.router.navigate(["registro-eventos/"+id]); 
-      } else {
-        console.log("Edición cancelada");
+        this.router.navigate(["registro-eventos/"+id]);
       }
     });
   }
 
-  public delete(id: number) {
-    // (Tu lógica de eliminar existente...)
+  public delete(idEvento: number) {
+    const dialogRef = this.dialog.open(EliminarEventoModalComponent, {
+      data: { id: idEvento },
+      height: '288px',
+      width: '328px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result && result.isDeleted){
+        alert("Evento eliminado correctamente");
+        this.obtenerEventos();
+      }
+    });
   }
 }
 

@@ -62,6 +62,8 @@ import { RegistroEventosScreenComponent } from './screens/registro-eventos-scree
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { EventosAcademicosScreenComponent } from './screens/eventos-academicos-screen/eventos-academicos-screen.component';
 import { EditarEventoModalComponent } from './modals/editar-evento-modal/editar-evento-modal.component';
+import { EliminarEventoModalComponent } from './modals/eliminar-evento-modal/eliminar-evento-modal.component';
+
 
 
 
@@ -86,7 +88,8 @@ import { EditarEventoModalComponent } from './modals/editar-evento-modal/editar-
     GraficasScreenComponent,
     RegistroEventosScreenComponent,
     EventosAcademicosScreenComponent,
-    EditarEventoModalComponent
+    EditarEventoModalComponent,
+    EliminarEventoModalComponent
   ],
   imports: [
     BrowserModule,

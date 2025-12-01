@@ -15,21 +15,49 @@ import { EliminarUserModalComponent } from 'src/app/modals/eliminar-user-modal/e
 })
 export class AlumnosScreenComponent implements OnInit, AfterViewInit {
   public name_user: string = "";
-  public rol: string = "" ;
+  public rol: string = "";
   public token: string = "";
   public lista_alumnos: any[] = [];
+  public isAdmin: boolean = false;
 
-  displayedColumns: string[] = ['matricula', 'nombre', 'email', 'fecha_nacimiento', 'telefono', 'rfc', 'curp', 'editar', 'eliminar'];
+  displayedColumns: string[] = ['matricula', 'nombre', 'email', 'fecha_nacimiento', 'telefono', 'rfc', 'curp'];
+
   dataSource = new MatTableDataSource<DatosUsuario>([]);
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
+  constructor(
+    public facadeService: FacadeService,
+    public alumnosService: AlumnosService,
+    private router: Router,
+    public dialog: MatDialog
+  ) { }
+
+  ngOnInit(): void {
+    this.name_user = this.facadeService.getUserCompleteName();
+
+    this.rol = this.facadeService.getUserGroup();
+    const rolLimpio = (this.rol || '').toLowerCase().trim();
+
+    this.isAdmin = (rolLimpio === 'administrador');
+
+    if(this.isAdmin){
+      this.displayedColumns.push('editar', 'eliminar');
+    }
+
+    this.token = this.facadeService.getSessionToken();
+    console.log("Token: ", this.token);
+    if(this.token == ""){
+      this.router.navigate(["/"]);
+    }
+    this.obtenerAlumnos();
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    // Ordenar "nombre" por first_name + last_name
     this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string) => {
       if (sortHeaderId === 'nombre') {
         const fn = (data.first_name || '').toString().trim().toLowerCase();
@@ -40,30 +68,11 @@ export class AlumnosScreenComponent implements OnInit, AfterViewInit {
       return (typeof value === 'string') ? value.toLowerCase() : value;
     };
 
-    // Filtro por nombre, apellido, email y matrícula
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const term = (filter || '').trim().toLowerCase();
       const searchable = `${data.first_name || ''} ${data.last_name || ''} ${data.email || ''} ${data.matricula || ''}`.toLowerCase();
       return searchable.indexOf(term) !== -1;
     };
-  }
-
-  constructor(
-    public facadeService: FacadeService,
-    public alumnosService: AlumnosService,
-    private router: Router,
-    public dialog: MatDialog // <--- Agregar esto
-  ) { }
-
-  ngOnInit(): void {
-    this.name_user = this.facadeService.getUserCompleteName();
-    this.rol = this.facadeService.getUserGroup();
-    this.token = this.facadeService.getSessionToken();
-    console.log("Token: ", this.token);
-    if(this.token == ""){
-      this.router.navigate(["/"]);
-    }
-    this.obtenerAlumnos();
   }
 
   public applyFilter(filterValue: string) {
@@ -87,7 +96,7 @@ export class AlumnosScreenComponent implements OnInit, AfterViewInit {
 
           this.dataSource = new MatTableDataSource<DatosUsuario>(this.lista_alumnos as DatosUsuario[]);
 
-          // Reasignar el accessor al recrear dataSource
+          // Reasignar sort y paginator aquí también por si acaso la data llega después del viewInit
           this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string) => {
             if (sortHeaderId === 'nombre') {
               const fn = (data.first_name || '').toString().trim().toLowerCase();
@@ -97,11 +106,8 @@ export class AlumnosScreenComponent implements OnInit, AfterViewInit {
             const value = (data as any)[sortHeaderId];
             return (typeof value === 'string') ? value.toLowerCase() : value;
           };
-
-          setTimeout(() => {
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-          });
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         }
       }, (error) => {
         console.error("Error al obtener la lista de alumnos: ", error);
@@ -115,28 +121,23 @@ export class AlumnosScreenComponent implements OnInit, AfterViewInit {
   }
 
   public delete(idUser: number) {
-    // Si el rol es administrador maestro pues entra pero si es alumno, se va y no deja.
-    if (this.rol == 'administrador' || this.rol == 'maestro') {
-
+    // Validación adicional de seguridad (aunque el botón esté oculto)
+    if (this.isAdmin) {
       const dialogRef = this.dialog.open(EliminarUserModalComponent, {
-        data: { id: idUser, rol: 'alumno' }, // Pasamos el rol alumno pq es lo que vamos a borrar
+        data: { id: idUser, rol: 'alumno' },
         height: '288px',
         width: '328px',
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result.isDelete) {
+        if (result && result.isDelete) {
           console.log("Alumno eliminado");
           alert("Alumno eliminado correctamente");
-          window.location.reload();
-        } else {
-          alert("No se eliminó el alumno");
-          console.log("No se eliminó el alumno");
+          // Recargar la lista en lugar de toda la página es más elegante
+          this.obtenerAlumnos();
         }
       });
-
     } else {
-      // Si el rol es alumno denegamos la acción.
       alert("No tienes permisos para eliminar alumnos.");
     }
   }

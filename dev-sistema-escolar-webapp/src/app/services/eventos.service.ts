@@ -19,8 +19,8 @@ export class EventosService {
   constructor(
     private http: HttpClient,
     private facadeService: FacadeService,
-    private validatorService: ValidatorService, 
-    private errorService: ErrorsService 
+    private validatorService: ValidatorService,
+    private errorService: ErrorsService
   ) { }
 
   // Estructura base del formulario
@@ -32,15 +32,15 @@ export class EventosService {
       'hora_inicio': '',
       'hora_fin': '',
       'lugar': '',
-      'publico_objetivo': [], 
-      'programa_educativo': '', 
+      'publico_objetivo': [],
+      'programa_educativo': '',
       'responsable': '',
       'descripcion': '',
       'cupo_maximo': 0
     }
   }
 
-  // VALIDACIÓN DEL EVENTO 
+  // VALIDACIÓN DEL EVENTO
   public validarEvento(data: any) {
     console.log("Validando evento... ", data);
     let error: any = {};
@@ -49,7 +49,7 @@ export class EventosService {
     if (!this.validatorService.required(data["nombre_evento"])) {
       error["nombre_evento"] = this.errorService.required;
     } else {
-      // Solo letras con acentos, números y espacios. Sin caracteres especiales.
+      // Solo letras con acentos, números y espacios sin caracteres especiales.
       const alphaNumericPattern = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ ]+$/;
       if (!alphaNumericPattern.test(data["nombre_evento"])) {
         alert("El nombre del evento solo puede contener letras, números y espacios.");
@@ -81,9 +81,9 @@ export class EventosService {
     if (!this.validatorService.required(data["hora_fin"])) {
       error["hora_fin"] = this.errorService.required;
     }
-    
+
     if (data["hora_inicio"] && data["hora_fin"]) {
-      // Convertimos a minutos para comparar correctamente 
+      // Convertimos a minutos para comparar correctamente
       const inicioMinutos = this.convertirHoraAMinutos(data["hora_inicio"]);
       const finMinutos = this.convertirHoraAMinutos(data["hora_fin"]);
 
@@ -92,7 +92,7 @@ export class EventosService {
       }
     }
 
-    // Lugar del evento 
+    // Lugar del evento
     if (!this.validatorService.required(data["lugar"])) {
       error["lugar"] = this.errorService.required;
     } else {
@@ -107,7 +107,7 @@ export class EventosService {
       error["publico_objetivo"] = "Selecciona al menos una opción";
     }
 
-     // Programa educativo (Solo si estudiantes está seleccionado)
+     // Programa educativo
     if (data["publico_objetivo"].includes('Estudiantes')) {
       if (!this.validatorService.required(data["programa_educativo"])) {
         error["programa_educativo"] = this.errorService.required;
@@ -121,23 +121,23 @@ export class EventosService {
       error["cupo_maximo"] = this.errorService.required;
     }
 
-    // 1. Validación Responsable (Select)
+    // Validación Responsable
     if (!this.validatorService.required(data["responsable"])) {
       error["responsable"] = this.errorService.required;
     }
 
-    // 2. Validación Descripción (Letras, números y puntuación básica)
+    // Validación Descripción letras, números y puntuación básica
     if (!this.validatorService.required(data["descripcion"])) {
       error["descripcion"] = this.errorService.required;
     } else {
-      // Permite letras, números, espacios y: . , ; : ¡ ! ¿ ? ( ) - _ " '
+      // Permite letras, números, espacios y puntuación básica
       const descPattern = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ .,;:¡!¿?()\-_\s"']+$/;
       if (!descPattern.test(data["descripcion"])) {
         error["descripcion"] = "Caracteres inválidos. Solo letras, números y puntuación básica.";
       }
     }
 
-    // 3. Validación Cupo Máximo (Enteros positivos, máx 3 dígitos)
+    // Validación Cupo Máximo
     if (!this.validatorService.required(data["cupo_maximo"])) {
       error["cupo_maximo"] = this.errorService.required;
     } else {
@@ -150,7 +150,7 @@ export class EventosService {
         if (cupo <= 0) {
           error["cupo_maximo"] = "Debe ser mayor a 0";
         }
-        // Máximo 3 dígitos (<= 999)
+        // Máximo 3 dígitos
         if (data["cupo_maximo"].toString().length > 3) {
           error["cupo_maximo"] = "Máximo 3 dígitos (ej. 999)";
         }
@@ -161,7 +161,7 @@ export class EventosService {
     return error;
   }
 
-  // Helper para convertir una hora a minutos del día 
+  // Helper para convertir una hora a minutos del día
   private convertirHoraAMinutos(horaStr: string): number {
     // Soporta formato "HH:MM"
     const [hours, minutes] = horaStr.split(':').map(Number);
@@ -172,7 +172,7 @@ export class EventosService {
   public registrarEvento(data: any): Observable<any>{
     const token = this.facadeService.getSessionToken();
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    
+
     return this.http.post<any>(`${environment.url_api}/eventos/`, data, { headers });
   }
 
@@ -180,7 +180,7 @@ export class EventosService {
   public obtenerListaEventos(): Observable<any> {
     const token = this.facadeService.getSessionToken();
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    return this.http.get<any>(`${environment.url_api}/eventos/`, { headers });
+    return this.http.get<any>(`${environment.url_api}/lista-eventos/`, { headers });
   }
 
   //Obtener un solo evento para editar
@@ -202,6 +202,13 @@ export class EventosService {
     const token = this.facadeService.getSessionToken();
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
     return this.http.get<any>(`${environment.url_api}/lista-responsables/`, { headers });
+  }
+
+  //Eliminar evento
+  public eliminarEvento(idEvento: number): Observable<any>{
+    const token = this.facadeService.getSessionToken();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+    return this.http.delete<any>(`${environment.url_api}/eventos/?id=${idEvento}`, { headers });
   }
 
 }

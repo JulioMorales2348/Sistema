@@ -26,7 +26,9 @@ urlpatterns = [
     #Maestro Data
         path('lista-maestros/', maestros.MaestrosAll.as_view()),
 
-        path('total-usuarios/', users.TotalUsers.as_view()),\
+        path('total-usuarios/', users.TotalUsers.as_view()),
+
+        path('lista-eventos/', eventos.EventosAll.as_view()),
     
         path('eventos/', eventos.EventosView.as_view()),
 
